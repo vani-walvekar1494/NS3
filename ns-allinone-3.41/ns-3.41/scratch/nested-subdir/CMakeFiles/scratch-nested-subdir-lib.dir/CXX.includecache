@@ -1,0 +1,16 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/workspaces/ns3-wireless-assignment/ns-allinone-3.41/ns-3.41/scratch/nested-subdir/lib/scratch-nested-subdir-library-header.h
+string
+-
+
+/workspaces/ns3-wireless-assignment/ns-allinone-3.41/ns-3.41/scratch/nested-subdir/lib/scratch-nested-subdir-library-source.cc
+scratch-nested-subdir-library-header.h
+/workspaces/ns3-wireless-assignment/ns-allinone-3.41/ns-3.41/scratch/nested-subdir/lib/scratch-nested-subdir-library-header.h
+
