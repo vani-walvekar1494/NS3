@@ -14,6 +14,7 @@ NS_LOG_COMPONENT_DEFINE("AdhocWifiExample");
 
 int main(int argc, char *argv[]) {
     std::cout << "Simulation started" << std::endl;
+
     // Enable logging
     LogComponentEnable("UdpEchoClientApplication", LOG_LEVEL_INFO);
     LogComponentEnable("UdpEchoServerApplication", LOG_LEVEL_INFO);
@@ -22,17 +23,16 @@ int main(int argc, char *argv[]) {
     NodeContainer nodes;
     nodes.Create(6);
 
-    // Set up mobility: 2D random walk
+    // Set up mobility: Fixed grid positioning for easy communication
     MobilityHelper mobility;
-    mobility.SetMobilityModel("ns3::RandomWalk2dMobilityModel",
-                              "Bounds", RectangleValue(Rectangle(-100, 100, -100, 100)));
     mobility.SetPositionAllocator("ns3::GridPositionAllocator",
-                                  "MinX", DoubleValue(-100.0),
-                                  "MinY", DoubleValue(-100.0),
-                                  "DeltaX", DoubleValue(20.0),
-                                  "DeltaY", DoubleValue(20.0),
+                                  "MinX", DoubleValue(0.0),
+                                  "MinY", DoubleValue(0.0),
+                                  "DeltaX", DoubleValue(10.0),
+                                  "DeltaY", DoubleValue(10.0),
                                   "GridWidth", UintegerValue(3),
                                   "LayoutType", StringValue("RowFirst"));
+    mobility.SetMobilityModel("ns3::ConstantPositionMobilityModel");
     mobility.Install(nodes);
 
     // Configure WiFi in ad-hoc mode
@@ -59,36 +59,37 @@ int main(int argc, char *argv[]) {
     Ipv4InterfaceContainer interfaces = address.Assign(devices);
 
     // UDP Echo Server on node 0
-    UdpEchoServerHelper echoServer(20);
+    UdpEchoServerHelper echoServer(9);  // Port 9 for server
     ApplicationContainer serverApps = echoServer.Install(nodes.Get(0));
     serverApps.Start(Seconds(1.0));
-    serverApps.Stop(Seconds(10.0));
+    serverApps.Stop(Seconds(20.0));  // Increase the stop time
 
     // UDP Echo Client on node 5
-    UdpEchoClientHelper client1(interfaces.GetAddress(0), 20);
-    client1.SetAttribute("MaxPackets", UintegerValue(2));
+    UdpEchoClientHelper client1(interfaces.GetAddress(0), 9);  // Port 9
+    client1.SetAttribute("MaxPackets", UintegerValue(20));  // Increase the number of packets
     client1.SetAttribute("Interval", TimeValue(Seconds(1.0)));
     client1.SetAttribute("PacketSize", UintegerValue(1024));
     ApplicationContainer clientApps1 = client1.Install(nodes.Get(5));
     clientApps1.Start(Seconds(2.0));
-    clientApps1.Stop(Seconds(6.0));
+    clientApps1.Stop(Seconds(20.0));  // Increase the stop time
 
     // UDP Echo Client on node 4
-    UdpEchoClientHelper client2(interfaces.GetAddress(0), 20);
-    client2.SetAttribute("MaxPackets", UintegerValue(2));
+    UdpEchoClientHelper client2(interfaces.GetAddress(0), 9);  // Port 9
+    client2.SetAttribute("MaxPackets", UintegerValue(20));  // Increase the number of packets
     client2.SetAttribute("Interval", TimeValue(Seconds(1.0)));
     client2.SetAttribute("PacketSize", UintegerValue(1024));
     ApplicationContainer clientApps2 = client2.Install(nodes.Get(4));
     clientApps2.Start(Seconds(3.0));
-    clientApps2.Stop(Seconds(6.0));
+    clientApps2.Stop(Seconds(20.0));  // Increase the stop time
 
-    // Enable packet capture only on node 2
-    phy.EnablePcap("adhoc-node2", devices.Get(2));
+    // Enable packet capture for all nodes
+    phy.EnablePcapAll("adhoc");
 
     // Run simulation
-    Simulator::Stop(Seconds(10));
+    Simulator::Stop(Seconds(20));  // Increase simulation time
     Simulator::Run();
     Simulator::Destroy();
+
     std::cout << "Simulation ended" << std::endl;
     return 0;
 }
