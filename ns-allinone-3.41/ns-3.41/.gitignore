@@ -1,0 +1,9 @@
+# Ignore build artifacts
+ns-allinone-3.41/ns-3.41/build/
+ns-allinone-3.41/ns-3.41/CMakeFiles/
+*.so
+*.gch
+ns-allinone-3.41/ns-3.41/build/
+ns-allinone-3.41/ns-3.41/CMakeFiles/
+*.gch
+*.so
